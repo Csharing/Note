@@ -536,6 +536,7 @@ SQL语句--mysql
 			mysql> GRANT SELECT ON fuliba.* TO root1@localhost
 			mysql> GRANT ALL PRIVILEGES ON *.* TO 'Cshare'@'localhost' WITH GRANT OPTION;
 			--详细的权限范围见参考【4】，create routine 创建function，procedure权限，alter routine则互补
+			--WITH GRANT OPTION使授予者能接着创建用户
 		
 		撤销权限：
 		
@@ -565,7 +566,8 @@ SQL语句--mysql
 			实例：
 			
 			mysql> GRANT ALL PRIVILEGES on *.* to 'root1'@'localhost' IDENTIFIED by 'root' With grant option
-			--赋予root1所有的权限		
+			mysql> GRANT ALL PRIVILEGES on *.* to 'xuniji'@'192.168.2.190' IDENTIFIED by 'root' With grant option
+			--赋予root1所有的权限，赋予xuniji远程用户访问权		
 			
 	日志管理
 	
