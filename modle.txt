@@ -21,6 +21,7 @@ Python的hasattr() getattr() setattr() 函数使用方法详解：http://www.cnb
 
 
 
+
 许多爬虫代码可看：http://www.cnblogs.com/liuyanpeng93/p/7710719.html
 反反爬虫实例：https://github.com/luyishisi/Anti-Anti-Spider
 
@@ -93,8 +94,9 @@ gui图形库
 csv模块
 解决插入的行之间存在空行的情况：http://blog.csdn.net/pfm685757/article/details/47806469
 
-NLTK模块
-自然语言处理模块
+
+
+
 
 
 
@@ -108,8 +110,8 @@ selenium3.7
 Selenium Python文档：https://www.cnblogs.com/taceywong/p/6602927.html?utm_source=tuicool&utm_medium=referral
 Python爬虫利器五之Selenium的用法：http://cuiqingcai.com/2599.html
 淘宝美食：https://github.com/Germey/TaobaoProduct
-
-
-
+python3实现爬取淘宝页面的商品的数据信息：http://blog.csdn.net/dh_sir/article/details/78504303
+淘宝信息定向爬虫实例分析：https://www.cnblogs.com/theprimone/p/7711333.html
+python +selenium 爬取淘宝网商品信息：http://blog.csdn.net/ljr257816/article/details/53956980
 
 
