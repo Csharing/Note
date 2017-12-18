@@ -1,0 +1,46 @@
+<html><head><title>JavaScript Test</title></head>
+<body><input type="text" id="text1" value="text"></input>  
+<input type="button" id="btn1" value="test"></input>
+<div id="div1"></div>
+<script type="text/javascript">
+function test_click() {
+  var a=1;
+  var b = 2.0;
+  text1.value = a+b; // a是Int, b是Double, a+b是Double,
+                     // a+b转化为String再赋值给text.value
+
+  var c = a.constructor.toString();
+  //div1.innerHTML=c;
+
+  var str = "<pre>";
+  b = b<<29;
+  str += b.toString();
+
+  b = b<<1;
+  str += "\n"+b;
+
+  b = b<<1;
+  str += "\n"+b;
+
+  b = b<<1;
+  str += "\n"+b;
+
+  b = -2147483648;
+  b = b>>1;
+  str += "\n"+b;
+
+  b = b>>>1;
+  str += "\n"+b;
+
+  b = 2147483648*2;
+  str += "\n"+b;
+
+
+  b = b>>1;
+  str += "\n"+b;
+
+  div1.innerHTML = str+"</pre>";
+}
+btn1.onclick=test_click;
+</script>
+</body></html>

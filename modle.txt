@@ -27,6 +27,7 @@ Python的hasattr() getattr() setattr() 函数使用方法详解：http://www.cnb
 redis
 	redis是一种nosql数据库，多用于分布式的系统之间的通信
 	使用python来操作redis用法详解：http://www.jianshu.com/p/2639549bedc8
+	redis加入到Windows 服务：http://blog.csdn.net/slowlifes/article/details/52690507
 
 	
 requests
@@ -92,7 +93,8 @@ gui图形库
 csv模块
 解决插入的行之间存在空行的情况：http://blog.csdn.net/pfm685757/article/details/47806469
 
-
+NLTK模块
+自然语言处理模块
 
 
 
