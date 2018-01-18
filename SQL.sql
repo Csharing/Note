@@ -190,7 +190,7 @@ SQL语句--mysql
 				--column1升序下column2升序
 				mysql> SELECT * FROM t1 ORDER BY column1 DESC;
 				mysql> SELECT * FROM t1 ORDER BY column1 DESC,column2 ASC;
-				--column1升序下column2降序
+				--column1降序下column2升序
 				
 			--LIMIT语句
 				mysql> SELECT * FROM t1 LIMIT 3;
