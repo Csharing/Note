@@ -1,15 +1,15 @@
 一：配置GIT
 
 	*第一次使用Git bash,为机器配置name和email，global全局，也可为单独的仓库配置
-	$ git config --global user.name "Your Name"
-	$ git config --global user.email "email@example.com"
+		$ git config --global user.name "Your Name"
+		$ git config --global user.email "email@example.com"
 	
 	*配置别名,使命令简单，--global表示全局，不加则表示针对于该仓库
-	$git config --global alias.co 'checkout'
-	$git config --global alias.unstage 'reset HEAD'
-	$git config --global alias.last 'log -1'
-	$git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)
-	%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+		$git config --global alias.co 'checkout'
+		$git config --global alias.unstage 'reset HEAD'
+		$git config --global alias.last 'log -1'
+		$git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)
+		%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 	
 	#每个仓库的Git配置文件都放在.git/config文件中
 	#每个用户的Git配置文件都放在用户主目录下的.gitconfig中
@@ -18,12 +18,16 @@
 
 	$ cd /c/Users/HaSEE/learngit
 	#切换目录
+	
 	$mkdir name
 	#当前目录下创建name文件夹
+	
 	$cd name
 	#切换到当前目录下的name文件夹
+	
 	$pwd
 	#显示当前命令行目录
+	
 	$git init
 	#将当前文件夹变成仓库
 	
@@ -33,10 +37,13 @@
 
 	$git status
 	#查看仓库状态
+	
 	$ git diff new.txt
 	#查看修改了哪些内容
+	
 	$ git add new.txt  
 	#提交文件，可提交多个文件以空格隔开
+	
 	$ git commit -m "详细记录"
 	#提交事务，即创建一个版本
 	
@@ -44,12 +51,16 @@
 
 	$git log
 	#查看所有的版本，按q退出
+	
 	$git log --pretty=oneline
 	#查看所有的版本，以版本号加备注的形式出现
+	
 	$git reset --hard HEAD^
 	#,HEAD表示当前版本，回退到上一个版本，^表示上个，^^表示上上个，HEAD`100
+	
 	$git reset --hard 6733044
 	#回退到以6733044开头的版本号，Git会自动查找
+	
 	$git reflog
 	#查看所有执行过的命令，最后一个命令排在第一位，可查看所有的commit对应的版本号
 	
@@ -57,6 +68,7 @@
 
 	$git checkout --new.txt
 	#工作区修改===撤回到最新的状态 优先级：暂存区》版本库
+	3
 	$git reset head new.txt
 	#暂存区修改===暂存区的修改回退到head版本状态，再用checkout修改
 	
@@ -70,41 +82,54 @@
 六：管理远程
 
 	1.本地-远程
+	
 		$ssh-keygen -t rsa -C "youremail@example.com"
 		#创建ssh-key，只能在用户目录下创建
 		
 		$git remote add origin https://github.com/Csharing/learngit.git
 		#关联远程库，ssh，https都需要试试，可同时关联github和码云，需命名不同的origin
+		
 		$git push -u origin master 
 		#将本地库的内容推送到远程库，github添加sshkey，两个库的名字必须一致，两个库的合并不能有冲突
+		
 		$git push origin master
 		#第一次用上面的命令，再提交就用本次命令
+		
 		$git remote rm origin
 		#删除远程连接
 		
 	2.远程-本地
+	
 		$git clone https://github.com/Csharing/learngit.git
 		#克隆git库，首先需要在github上添加shh-key，克隆的库会自动关联origin
+		
 		$git pull
 		#更新你的本地仓库
 
 七：管理分支
 
 	1.创建分支
+	
 		$git branch
 		#查看当前分支
+		
 		$git checkout -b dev
 		#创建并切换到dev分支，相当于$git branch dev + $git checkout dev
+		
 		$git branch -m a b
 		#重命名a分支为b
+		
 		$git branch -d dev
 		#删除dev分支
+		
 		$git branch -D branch-A
 		#删除一个没有被合并的分支
 		
 	2.分支合并
+	
 		$git merge dev
 		#指定分支合并到当前分支，fast-forward模式
+		
 		$git merge --no-ff -m "merge with no-ff" cp1
 		#采用no-ff模式合并，会产生commit记录，而fast-ward模式则没有分支合并的记录
 		
@@ -113,27 +138,36 @@
 		$cat mew.txt
 		#查看冲突的文件，再查看冲突的内容(此时文档会用<<<<<<<，=======，>>>>>>>标记不同分支内容）
 		 修改好后再提交，合并分支。
+		 
 		$git log --graph --pretty=oneline --abbrev-commit
 		#查看分支合并情况
 
 八：管理远程分支
 
 	$git remote
-	#查看已关联的远程库，$git remote -v 显示更详细的信息，
+	#查看已关联的远程库，$git remote -v 显示更详细的信息
+	
 	$git remote show origin
 	#查看github上origin的信息与你本地的origin作对比
+	
 	$git branch -a
 	#可以查看所有的分支，包括本地和origin
+	
 	$git push origin branch-b
 	#将commit推送到github的b分支，若github没有该分支，则github创建一个
+	
 	$git pull
 	#抓取远程的提交，当你和别人的提交有冲突时 $git pull origin master同步master分支，再提交
+	
 	$git checkout -b branch-b origin/branch-b
 	#在本地创建和远程分支对应的分支
+	
 	$git branch --set-upstream branch-c origin/branch-c
 	#指定本地分支branch-c与远程branch-b的连接
+	
 	$git push origin -d branch-A
 	#删除github上branch-A分支，本地branch-A仍存在
+	
 	$ git remote prune origin 
 	#当别人删除了远程里的分支时，这个命令可以删除你本地有而远程没有的分支。
 
@@ -141,10 +175,13 @@
 
 	$git stash
 	#保存当前的工作状态，多用于修复bug时保存你当时的工作，注意运行命令之前要ctrl+s保存一下
+	
 	$git stash list
 	#查看stash的保存记录
+	
 	$git stash pop
 	#恢复到最新的工作现场，可多次使用。相当于$git stash apply +$git stash drop
+	
 	$git stash apply stash@{0}
 	#恢复到指定的工作现场
 	
@@ -152,14 +189,19 @@
 
 	$git tag V1.0
 	#切换到分支上，打上标签，默认为head，$git tag v0.9 6224098 给特定的提交打标签，可以是过去的
+	
 	$git show v1.0
 	#查看标签信息
+	
 	$git tag -a v1.0 -m "version 0.1 released" 3333333
 	#创建带有说明的标签，-a换成-s用PGP签名标签
+	
 	$git tag -d v1.0
 	#删除本地标签
+	
 	$git push origin v1.0
 	#推送标签到远程，将v1.0换成--tags ，一次性推送所有的标签
+	
 	$git tag -d v1.0  + $git push origin :refs/tags/v1.0
 	#删除远程的标签分两步，先删除本地的标签，再push，格式如上
 
@@ -168,5 +210,6 @@
 	.gitignore文件用来忽略带有敏感信息的文件，将需要忽略的文件后缀名填写完成后提交即可
 	$git add -f app.class
 	#即使.class文件会被忽略，也能强制添加
+	
 	$git check-ignore -v app.class
 	#查找出.gitignore文件中对应的规则

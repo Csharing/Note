@@ -1,0 +1,65 @@
+###########################################
+MongoDB
+###########################################
+一：开启服务
+
+		单个服务：
+		
+			cmd模式下
+			运行服务：
+
+				>cd C:\Program Files\MongoDB\Server\3.4\bin
+				>mongod --dbpath c:\mongodata\db
+				
+				数据库将文件放在这个目录下，这样开启的服务没有log
+			
+			连接服务：(新开一个cmd窗口)
+			
+				>cd C:\Program Files\MongoDB\Server\3.4\bin
+				>mongo.exe
+				
+				
+		配置服务：
+		
+			编写配置文件(新建txt文件再改为cfg)：
+				systemLog:
+					destination: file
+					path: c:\mongodata\log\mongod.log
+				storage:
+					dbPath: c:\mongodata\db
+					bind_ip：127.0.0.1
+					port：27017
+					serviceName：YourServiceName
+					serviceDisplayName：YourServiceName
+				
+			cmd管理员模式下
+			>"C:\Program Files\MongoDB\Server\3.4\bin\mongod.exe" --config "C:\mongodb\mongod.cfg" --logappend --install 
+			>"C:\Program Files\MongoDB\Server\3.4\bin\mongod.exe" --remove
+			
+			启动服务
+			>net start MongoDB
+			>net stop MongoDB
+			
+	
+二：数据库
+db
+显示当前数据库对象或集合
+use Datebase	
+如果数据库不存在，则创建数据库，否则切换到指定数据库。
+show dbs
+show databases
+查看所有数据库
+db.dropDatabase()
+删除当前数据库
+
+
+show tables
+查看所有集合
+db.collection.drop()
+删除集合，collection需要指定
+	
+
+
+
+		
+	
