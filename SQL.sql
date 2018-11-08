@@ -16,19 +16,18 @@ SQL语句--mysql
 	
 		创建：
 		
-			mysql> CREATE TABLE t1(
-				ID int NOT NULL AUTO_INCREMENT，
-				number1 int(10) UNSIGNED NOT NULL,
-				number2 int NOT NULL,
-				name1 VARCHAR(255),
-				name2 VARCHAR(255) ENUM('a','b') COMMENT('ab之间选择'),
-				name3 VARCHAR(255) DEFAULT 'Cshare',
-				
-				PRIMARY KEY(ID),
-				FOREIGN KEY (number1) REFERENCES t2(number1),
-				CHECK(number2>1)，
-				UNIQUE(name1)
-				);
+			mysql> create table t1(
+					ID int not null AUTO_INCREMENT,
+					number1 int(10) UNSIGNED NOT NULL,
+					number2 int NOT NULL,
+					name1 varchar(255),
+					name2 varchar(255)  comment '注释',
+					name3 varchar(255) default 'Cshare',
+					name4 Enum('a','b'),
+					primary key (ID),
+					check(number1>1),
+					unique(name1)
+					);
 				
 			mysql> CREATE TABLE t2 SELECT * FROM t3;
 			--可用于备份
@@ -41,7 +40,10 @@ SQL语句--mysql
 				
 				UNSIGNED--非负数,范围从0开始
 				
-				ENUM--枚举
+				ENUM--ENUM('a','b')
+					枚举，无需定义数据类型，且只能为文本型
+				
+				注：最后一行不能加,
 				
 								 
 		删除：
@@ -72,7 +74,7 @@ SQL语句--mysql
 			--修改column1的数据类型为int，可自定义多样化的datatype
 			
 	3.临时表(TEMPORARY)
-	--在你断开连接是自动删除，用法同table
+	--在你断开连接时自动删除，用法同table
 	
 		mysql> CREATE TEMPORARY TABLE t1 SELECT * FROM t2;
 		--创建时直接导入数据
@@ -84,9 +86,8 @@ SQL语句--mysql
 
 	约束(CONSTRAINTS):
 		
-		1.NOT NULL--约束强制列不接受 NULL 值
 	  
-		2.UNIQUE --约束唯一标识数据库表中的每条记录
+		1.UNIQUE --约束唯一标识数据库表中的每条记录
 	  
 			CONSTRAINT cons1 UNIQUE (number1,number2),
 			--创建表时命名UNIQUE约束
@@ -97,7 +98,7 @@ SQL语句--mysql
 			mysql> ALTER TABLE t1 DROP INDEX cons2;
 			--撤销UNIQUE约束
 		
-		3.PRIMARY KEY--约束唯一标识数据库表中的每条记录，UNIQUE和NOT NULL集合，每个表都应有且只有一个主键
+		2.PRIMARY KEY--约束唯一标识数据库表中的每条记录，UNIQUE和NOT NULL集合，每个表都应有且只有一个主键
 	  
 			CONSTRAINT cons1 PRIMARY KEY (number1,number2),
 			--创建表时命名PRIMARY KEY约束
@@ -108,7 +109,7 @@ SQL语句--mysql
 			mysql> ALTER TABLE t1 DROP PRIMARY KEY;
 			--撤销PRIMARY KEY约束
 		
-		4.FOREIGN KEY --一个表中的 FOREIGN KEY 指向另一个表中的 PRIMARY KEY
+		3.FOREIGN KEY --一个表中的 FOREIGN KEY 指向另一个表中的 PRIMARY KEY
 	  
 			CONSTRAINT cons1 FOREIGN KEY (number1) REFERENCES t2(number1),
 			--创建表时命名FOREIGN KEY约束
@@ -119,7 +120,7 @@ SQL语句--mysql
 			mysql> ALTER TABLE t1 DROP FOREIGN KEY cons2;
 			--撤销FOREIGN KEY约束
 		 
-		5.CHECK --约束用于限制列中的值的范围
+		4.CHECK --约束用于限制列中的值的范围
 	  
 			CONSTRAINT cons1 CHECK (number1>0 AND name1='Cshare'),
 			--创建表时命名CHECK约束
@@ -130,7 +131,7 @@ SQL语句--mysql
 			mysql> ALTER TABLE Persons DROP CHECK cons2;
 			--撤销CHECK约束
 		 
-		6.DEFAULT --约束用于向列中插入默认值
+		5.DEFAULT --约束用于向列中插入默认值
 		
 			OrderDate DATE DEFAULT GETDATE(),
 			--DEFAULT可以插入函数
@@ -171,6 +172,7 @@ SQL语句--mysql
 				mysql> SELECT * FROM t1 WHERE column1 BETWEEN value1 AND value2
 				mysql> SELECT * FROM t1 WHERE column1 BETWEEN 'a' AND 'h';
 				--BETWEEN可以是数字，文本，日期；包含value1，value2；NOT BETWEEN 相补
+				--文本型时慎用
 				mysql> SELECT * FROM t1 WHERE column1 LIKE 'c%'
 				mysql> SELECT * FROM t1 WHERE column1 NOT LIKE '%c%'
 				--'%'表示一个或多个,'_'表示一个，[charlist],[^charlist]表示字符列中的一个,也用于show语句
@@ -280,9 +282,9 @@ SQL语句--mysql
 		DATE函数
 			mysql> SELECT now();
 			--返回当前时间
-			mysql> SELECT DATE(now);
+			mysql> SELECT DATE(now());
 			--提取日期
-			SELECT DATE_FORMAT(NOW(),'%m/%d/%y');
+			mysql> SELECT DATE_FORMAT(NOW(),'%m/%d/%y');
 			--指定日期格式，%Y2017|%y17
 			
 		NULL判断
@@ -530,6 +532,8 @@ SQL语句--mysql
 		
 			mysql> CREATE user 'root1'@'localhost' IDENTIFIED by 'root'
 			--无权限,连接之后只有information_schema表可以查看，@前后加不加''都可以
+			--localhost换成%即是任意ip
+			--防火墙要允许访问
 		
 		授予权限：
 		
@@ -567,7 +571,10 @@ SQL语句--mysql
 			
 			mysql> GRANT ALL PRIVILEGES on *.* to 'root1'@'localhost' IDENTIFIED by 'root' With grant option
 			mysql> GRANT ALL PRIVILEGES on *.* to 'xuniji'@'192.168.2.190' IDENTIFIED by 'root' With grant option
-			--赋予root1所有的权限，赋予xuniji远程用户访问权		
+			--赋予root1所有的权限，赋予xuniji远程用户访问权
+
+		8.0版本创建用户：
+		
 			
 	日志管理
 	
@@ -658,13 +665,19 @@ SQL语句--mysql
 		6.使用外键保证数据的完整性
 		
 		7.使用索引，索引避免建在重复值多的列，应建立在那些将用于JOIN,WHERE判断和ORDERBY排序的字段上
-		
+		  
 		8.语句中应让相同类型的字段间进行比较的操作，在建有索引的字段上尽量不要使用函数进行操作，
 		  在搜索字符型字段时，我们有时会使用LIKE关键字和通配符，这种做法虽然简单，但却也是以牺牲系统性能为代价的。
 		  
 		*/
 			
+十一：扩充
 
+		set @a='0422';
+		set @_sql=concat('select * from tableau.',@a);
+		PREPARE stmt FROM @_sql;
+		EXECUTE stmt ;
+		DEALLOCATE PREPARE stmt;
 
 	
 	
@@ -675,7 +688,7 @@ SQL语句--mysql
 
 【1】数据类型：http://www.w3school.com.cn/sql/sql_datatypes.asp
 【2】date函数：http://www.w3school.com.cn/sql/sql_dates.asp
-【3】执行计划：http://blog.itpub.net/12679300/viewspace-1394985/
+【3】执行计划：https://blog.csdn.net/heng_yan/article/details/78324176
 【4】权限修改：http://www.cnblogs.com/snsdzjlz320/p/5764977.html
 【5】开启二进制日志：http://www.cnblogs.com/wangwust/p/6433453.html
 【6】恢复二进制日志：http://www.jb51.net/article/54333.htm

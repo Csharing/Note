@@ -55,8 +55,11 @@ db.dropDatabase()
 
 show tables
 查看所有集合
+db.createCollection("mycoll", {capped:true, size:100000})
+一般的集合无固定结构，capped可以指定集合的大小
 db.collection.drop()
-删除集合，collection需要指定
+删除集合，collection指集合名称
+
 	
 
 
