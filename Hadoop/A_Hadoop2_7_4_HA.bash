@@ -1,0 +1,238 @@
+#-----------------------------------------------------------------------#
+#                                  HDFS配置                             #
+#-----------------------------------------------------------------------#
+
+#/opt/hadoop/hadoop-2.7.4/etc/hadoop/hadoop-env.sh
+sed -ri 's/\$\{JAVA_HOME\}/\/opt\/java\/jdk1.8.0_211/g' /opt/hadoop/hadoop-2.7.4/etc/hadoop/hadoop-env.sh
+
+#/opt/hadoop/hadoop-2.7.4/etc/hadoop/slaves
+cat > /opt/hadoop/hadoop-2.7.4/etc/hadoop/slaves <<EOF
+worker3
+worker4
+worker5
+EOF
+
+#/opt/hadoop/hadoop-2.7.4/etc/hadoop/core-site.xml
+sed -i '/^<configuration>/,/<\/configuration>$/d' /opt/hadoop/hadoop-2.7.4/etc/hadoop/core-site.xml &&\
+cat >> /opt/hadoop/hadoop-2.7.4/etc/hadoop/core-site.xml <<EOF
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://NameNs</value>
+    </property>
+    <property>
+        <name>hadoop.tmp.dir</name>
+        <value>file:///data/hadoop/tmp</value>
+    </property>
+    <property>
+        <name>hadoop.http.staticuser.user</name>
+        <value>root</value>
+    </property>
+    <property>
+        <name>ha.zookeeper.quorum</name>
+        <value>worker3:2181,worker4:2181,worker5:2181</value>
+    </property>
+    <property>
+        <name>hadoop.http.staticuser.user</name>
+        <value>hadoop</value>
+    </property> 
+    <!-- Hue WebHDFS proxy user setting -->
+    <property>
+        <name>hadoop.proxyuser.root.hosts</name>
+        <value>*</value>
+    </property>
+    <property>
+        <name>hadoop.proxyuser.root.groups</name>
+        <value>*</value>
+    </property>
+    <property>
+         <name>hadoop.proxyuser.hue.hosts</name>
+         <value>*</value>
+    </property>
+    <property>
+         <name>hadoop.proxyuser.hue.groups</name>
+         <value>*</value>
+    </property>
+    <property>
+        <name>hadoop.proxyuser.httpfs.hosts</name>
+        <value>*</value>
+    </property>
+    <property>
+        <name>hadoop.proxyuser.httpfs.groups</name>
+        <value>*</value>
+    </property>
+        <property>
+        <name>hadoop.proxyuser.hbase.hosts</name>
+        <value>*</value>
+    </property>
+    <property>
+        <name>hadoop.proxyuser.hbase.groups</name>
+        <value>*</value>
+    </property>
+    <property>
+        <name>hbase.thrift.support.proxyuser</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hbase.regionserver.thrift.http</name>
+        <value>true</value>
+    </property>
+</configuration>
+EOF
+
+#/opt/hadoop/hadoop-2.7.4/etc/hadoop/hdfs-site.xml
+sed -i '/^<configuration>/,/<\/configuration>$/d' /opt/hadoop/hadoop-2.7.4/etc/hadoop/hdfs-site.xml &&\
+cat >> /opt/hadoop/hadoop-2.7.4/etc/hadoop/hdfs-site.xml <<EOF
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>2</value>
+    </property>
+    <property>
+        <name>dfs.permissions.enabled</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>dfs.blocksize</name>
+        <value>134217728</value>
+    </property>
+    <property>
+        <name>dfs.nameservices</name>
+        <value>NameNs</value>
+    </property>
+    <property>
+        <name>dfs.ha.namenodes.NameNs</name>
+        <value>NameN1,NameN2</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.NameNs.NameN1</name>
+        <value>worker3:9000</value>
+    </property>
+    <property>
+        <name>dfs.namenode.http-address.NameNs.NameN1</name>
+        <value>worker3:50070</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.NameNs.NameN2</name>
+        <value>worker4:9000</value>
+    </property>
+    <property>
+        <name>dfs.namenode.http-address.NameNs.NameN2</name>
+        <value>worker4:50070</value>
+    </property>
+    <property>
+        <name>dfs.namenode.shared.edits.dir</name>
+        <value>qjournal://worker3:8485;worker4:8485;worker5:8485/NameNs</value>
+    </property>
+    <property>
+        <name>dfs.journalnode.edits.dir</name>
+        <value>/data/hadoop/journal</value>
+    </property>
+    <property>
+        <name>dfs.client.failover.proxy.provider.NameNs</name>
+        <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+    </property>
+    <property>
+        <name>dfs.ha.fencing.methods</name>
+        <value>
+            sshfence
+            shell(/bin/true)
+        </value>
+    </property>
+    <property>
+        <name>dfs.ha.fencing.ssh.private-key-files</name>
+        <value>/root/.ssh/id_rsa</value>
+    </property>
+    <property>
+        <name>dfs.ha.fencing.ssh.connect-timeout</name>
+        <value>30000</value>
+    </property>
+    <property>
+        <name>dfs.ha.automatic-failover.enabled</name>
+        <value>true</value>
+    </property>
+        <property>
+        <name>dfs.webhdfs.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>file:///data/hadoop/dfs/name</value>
+    </property>
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>file:///data/hadoop/dfs/data</value>
+    </property>
+</configuration>
+EOF
+
+#/opt/hadoop/hadoop-2.7.4/etc/hadoop/mapred-site.xml
+mv /opt/hadoop/hadoop-2.7.4/etc/hadoop/mapred-site.xml.template /opt/hadoop/hadoop-2.7.4/etc/hadoop/mapred-site.xml &&\
+sed -i '/^<configuration>/,/<\/configuration>$/d' /opt/hadoop/hadoop-2.7.4/etc/hadoop/mapred-site.xml &&\
+cat >> /opt/hadoop/hadoop-2.7.4/etc/hadoop/mapred-site.xml <<EOF
+<configuration>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>mapreduce.jobhistory.address</name>
+        <value>worker3:10020</value>
+    </property>
+    <property>
+        <name>mapreduce.jobhistory.webapp.address</name>
+        <value>worker3:19888</value>
+    </property>
+    <property>
+        <name>mapreduce.map.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop/hadoop-2.7.4</value>
+    </property>
+    <property>
+        <name>mapreduce.reduce.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop/hadoop-2.7.4</value>
+    </property>
+</configuration>
+EOF
+
+#/opt/hadoop/hadoop-2.7.4/etc/hadoop/yarn-site.xml
+sed -i '/^<configuration>/,/<\/configuration>$/d' /opt/hadoop/hadoop-2.7.4/etc/hadoop/yarn-site.xml &&\
+cat >> /opt/hadoop/hadoop-2.7.4/etc/hadoop/yarn-site.xml <<EOF
+<configuration>
+    <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+    <property>
+        <name>yarn.log-aggregation-enable</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>yarn.log-aggregation.retain-seconds</name>
+        <value>106800</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.ha.enabled</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.cluster-id</name>
+        <value>cluster1</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.ha.rm-ids</name>
+        <value>rm1,rm2</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.hostname.rm1</name>
+        <value>worker3</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.hostname.rm2</name>
+        <value>worker4</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.zk-address</name>
+        <value>worker3:2181,worker4:2181,worker5:2181</value>
+    </property>
+</configuration>
+EOF
