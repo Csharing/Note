@@ -2,158 +2,158 @@ SQL语句 -- hive
 
 一：设计数据库
 
-	1.数据库(DATABASE)
-	
-		创建：hive> CREATE DATABASE d1;
-		删除：hive> DROP DATABASE d1;
-		查看：hive> SHOW DATABASES;
-		切换：hive> USE d1;
-	
-	2.数据表(TABLE)
-	
-		创建：
-			内部表
-				hive> 
-						create table t1(
-						 number1   TINYINT      comment '注释'
-						,number2   SMALLINT     comment '注释'
-						,number3   INT          comment '注释'
-						,number4   BIGINT       comment '注释'
-						,name1     BOOLEAN      comment '注释'
-						,name2     FLOAT        comment '注释'
-						,name3     decimal      comment '注释'
-						,name4     DOUBLE       comment '注释'
-						,name5     STRING       comment '注释')
-						COMMENT 'This is the page view table'
+    1.数据库(DATABASE)
+    
+        创建：hive> CREATE DATABASE d1;
+        删除：hive> DROP DATABASE d1;
+        查看：hive> SHOW DATABASES;
+        切换：hive> USE d1;
+    
+    2.数据表(TABLE)
+    
+        创建：
+            内部表
+                hive> 
+                        create table t1(
+                         number1   TINYINT      comment '注释'
+                        ,number2   SMALLINT     comment '注释'
+                        ,number3   INT          comment '注释'
+                        ,number4   BIGINT       comment '注释'
+                        ,name1     BOOLEAN      comment '注释'
+                        ,name2     FLOAT        comment '注释'
+                        ,name3     decimal      comment '注释'
+                        ,name4     DOUBLE       comment '注释'
+                        ,name5     STRING       comment '注释')
+                        COMMENT 'This is the page view table'
 
-						PARTITIONED BY(dt STRING, country STRING)
-						CLUSTERED BY(userid) SORTED BY(viewTime) INTO 32 BUCKETS
+                        PARTITIONED BY(dt STRING, country STRING)
+                        CLUSTERED BY(userid) SORTED BY(viewTime) INTO 32 BUCKETS
 
-						ROW FORMAT DELIMITED
-						FIELDS TERMINATED BY '\001'
-						COLLECTION ITEMS TERMINATED BY '\002'
-						MAP KEYS TERMINATED BY '\003'
+                        ROW FORMAT DELIMITED
+                        FIELDS TERMINATED BY '\001'
+                        COLLECTION ITEMS TERMINATED BY '\002'
+                        MAP KEYS TERMINATED BY '\003'
 
-						STORED AS SEQUENCEFILE
-						LOCATION '<hdfs_location>';
-					
-					压缩：
-						stored as textfile
-						stored as sequencefile
-						stored as rcfile
-						stored as parquet
+                        STORED AS SEQUENCEFILE
+                        LOCATION '<hdfs_location>';
+                    
+                    压缩：
+                        stored as textfile
+                        stored as sequencefile
+                        stored as rcfile
+                        stored as parquet
 
-				hive> create table t2 like t1;
-				
-			外部表
-				hive> create external table t3;
-				hive> create external table t3(number1 int) partitioned by (part1 string);
-								 
-		删除：
-			hive> DROP TABLE t1;
-			hive> DROP TABLE IF EXISTS t1;
-			
-		查看：
-			hive> SHOW TABLES;
-			hive> DESC t1;
-			hive> SHOW CREATE table t1;
-			hive> SHOW partitions t1;
-		
-		改动：
-			hive> alter table t1 rename to t2;
-			hive> alter table t1 add columns (col1 int comment ‘新增’)；
-			hive> alter table t1 change col1 col2 int;
-			hive> alter table t1 replace columns (col1 int,col2 string,col3 string)；
-	
-		
-			
+                hive> create table t2 like t1;
+                
+            外部表
+                hive> create external table t3;
+                hive> create external table t3(number1 int) partitioned by (part1 string);
+                                 
+        删除：
+            hive> DROP TABLE t1;
+            hive> DROP TABLE IF EXISTS t1;
+            
+        查看：
+            hive> SHOW TABLES;
+            hive> DESC t1;
+            hive> SHOW CREATE table t1;
+            hive> SHOW partitions t1;
+        
+        改动：
+            hive> alter table t1 rename to t2;
+            hive> alter table t1 add columns (col1 int comment ‘新增’)；
+            hive> alter table t1 change col1 col2 int;
+            hive> alter table t1 replace columns (col1 int,col2 string,col3 string)；
+    
+        
+            
 二：管理单表
-	
-	1.SELECT(子查询)
-	
-		*简单选取
-		
-			hive> SELECT column1,column2 FROM t1;
-			hive> SELECT * FROM t1;
-			hive> SELECT DISTINCT column1 FROM t1;--去重
-		
-		*复杂选取
-		
-			--WHERE子句{=,<>,>,<,>=,<=,BETWEEN,LIKE，IN}
-			
-				hive> SELECT * FROM t1 WHERE column1='Cshare';
-				hive> SELECT * FROM t1 WHERE column1>100;			
-				hive> SELECT * FROM t1 WHERE column1 BETWEEN value1 AND value2
-				hive> SELECT * FROM t1 WHERE column1 BETWEEN 'a' AND 'h';
-				--BETWEEN可以是数字，文本，日期；包含value1，value2；NOT BETWEEN 相补
-				--文本型时慎用
-				hive> SELECT * FROM t1 WHERE column1 LIKE 'c%'
-				hive> SELECT * FROM t1 WHERE column1 NOT LIKE '%c%'
-				--'%'表示一个或多个,'_'表示一个，[charlist],[^charlist]表示字符列中的一个,也用于show语句
-				hive> SELECT * FROM t1 WHERE column1 IN (value1,value2,...)
-				hive> SELECT * FROM t1 WHERE column1 IN (SELECT column2 FROM t2)
-				--IN,可以嵌套子查询
-				
-			--AND和OR运算符
-			
-				hive> SELECT * FROM t1 WHERE column1='Cshare' AND column2>100;
-				hive> SELECT * FROM t1 WHERE column1='Cshare' OR column2>100;
-				
-			--ORDER BY语句(默认ASC表示升序，DESC表示降序） 
-			
-				hive> SELECT * FROM t1 ORDER BY column1;
-				hive> SELECT * FROM t1 ORDER BY column1,column2;
-				--column1升序下column2升序
-				hive> SELECT * FROM t1 ORDER BY column1 DESC;
-				hive> SELECT * FROM t1 ORDER BY column1 DESC,column2 ASC;
-				--column1降序下column2升序
-				
-			--LIMIT语句
-				hive> SELECT * FROM t1 LIMIT 3;
-				--选取前三条
-				hive> SELECT * FROM t1 LIMIT 2,3;
-				--从第3条开始选取3条数据,第一个参数默认从0开始				
-	
-	2.INSERT
-	
-		hive> LOAD DATA INPATH '/20131101' OVERWRITE INTO TABLE t1 PARTITION(part1='20131101');
-		--导入分区
-		hive> INSERT OVERWRITE TABLE t1 SELECT a,b FROM t2;
-		-- 插入数据
-		hive> INSERT TABLE t1 SELECT a,b FROM t2;
-		-- 追加数据
+    
+    1.SELECT(子查询)
+    
+        *简单选取
+        
+            hive> SELECT column1,column2 FROM t1;
+            hive> SELECT * FROM t1;
+            hive> SELECT DISTINCT column1 FROM t1;--去重
+        
+        *复杂选取
+        
+            --WHERE子句{=,<>,>,<,>=,<=,BETWEEN,LIKE，IN}
+            
+                hive> SELECT * FROM t1 WHERE column1='Cshare';
+                hive> SELECT * FROM t1 WHERE column1>100;            
+                hive> SELECT * FROM t1 WHERE column1 BETWEEN value1 AND value2
+                hive> SELECT * FROM t1 WHERE column1 BETWEEN 'a' AND 'h';
+                --BETWEEN可以是数字，文本，日期；包含value1，value2；NOT BETWEEN 相补
+                --文本型时慎用
+                hive> SELECT * FROM t1 WHERE column1 LIKE 'c%'
+                hive> SELECT * FROM t1 WHERE column1 NOT LIKE '%c%'
+                --'%'表示一个或多个,'_'表示一个，[charlist],[^charlist]表示字符列中的一个,也用于show语句
+                hive> SELECT * FROM t1 WHERE column1 IN (value1,value2,...)
+                hive> SELECT * FROM t1 WHERE column1 IN (SELECT column2 FROM t2)
+                --IN,可以嵌套子查询
+                
+            --AND和OR运算符
+            
+                hive> SELECT * FROM t1 WHERE column1='Cshare' AND column2>100;
+                hive> SELECT * FROM t1 WHERE column1='Cshare' OR column2>100;
+                
+            --ORDER BY语句(默认ASC表示升序，DESC表示降序） 
+            
+                hive> SELECT * FROM t1 ORDER BY column1;
+                hive> SELECT * FROM t1 ORDER BY column1,column2;
+                --column1升序下column2升序
+                hive> SELECT * FROM t1 ORDER BY column1 DESC;
+                hive> SELECT * FROM t1 ORDER BY column1 DESC,column2 ASC;
+                --column1降序下column2升序
+                
+            --LIMIT语句
+                hive> SELECT * FROM t1 LIMIT 3;
+                --选取前三条
+                hive> SELECT * FROM t1 LIMIT 2,3;
+                --从第3条开始选取3条数据,第一个参数默认从0开始                
+    
+    2.INSERT
+    
+        hive> LOAD DATA INPATH '/20131101' OVERWRITE INTO TABLE t1 PARTITION(part1='20131101');
+        --导入分区
+        hive> INSERT OVERWRITE TABLE t1 SELECT a,b FROM t2;
+        -- 插入数据
+        hive> INSERT TABLE t1 SELECT a,b FROM t2;
+        -- 追加数据
 
 
-	3.DELETE
-		hive> ALTER TABLE t1 DROP PARTITION (dt='20101202');
-		--删除分区
-		hive> TRUNCATE TABLE t1;
+    3.DELETE
+        hive> ALTER TABLE t1 DROP PARTITION (dt='20101202');
+        --删除分区
+        hive> TRUNCATE TABLE t1;
 
-		
-		
+        
+        
 三：管理多表
 
-	--别名 Aliases
-	
-		hive> SELECT column1 FROM table1 AS t1
-		hive> SELECT column1 AS co1 FROM t1
-		hive> SELECT t1.column1,t2.column1 FROM table1 AS t1,table2 AS t2 
-		--以column1，column2为列构成的表，若不足则最后一条数据向下填充
-		
-		
-	JOIN:--用于根据两个或多个表中的列之间的关系，从这些表中查询数据
-	
-		hive> SELECT t1.column1,t2.column1 WHERE t1.column2=t2.column2;
-		--相同于INNER JOIN，当t1.column2与t2.column2分别含有n,m个相同重复值时，则会生成n*m条数据
-		
-		INNER JOIN--A∩B  在表中存在至少一个匹配时，INNER JOIN 关键字返回行
-		hive> SELECT t1.column1,t2.column1 FROM t1 INNER JOIN t2 ON t1.column2=t2.column2
-		
-	
-	UNION ALL:--UNION操作符用于合并两个或多个具有相似结构的SELECT语句
-	
-		hive> SELECT * FROM t1 UNION ALL SELECT * FROM t2;
-		--UNION操作符选取不同的值，如果允许重复的值，请使用 UNION ALL
+    --别名 Aliases
+    
+        hive> SELECT column1 FROM table1 AS t1
+        hive> SELECT column1 AS co1 FROM t1
+        hive> SELECT t1.column1,t2.column1 FROM table1 AS t1,table2 AS t2 
+        --以column1，column2为列构成的表，若不足则最后一条数据向下填充
+        
+        
+    JOIN:--用于根据两个或多个表中的列之间的关系，从这些表中查询数据
+    
+        hive> SELECT t1.column1,t2.column1 WHERE t1.column2=t2.column2;
+        --相同于INNER JOIN，当t1.column2与t2.column2分别含有n,m个相同重复值时，则会生成n*m条数据
+        
+        INNER JOIN--A∩B  在表中存在至少一个匹配时，INNER JOIN 关键字返回行
+        hive> SELECT t1.column1,t2.column1 FROM t1 INNER JOIN t2 ON t1.column2=t2.column2
+        
+    
+    UNION ALL:--UNION操作符用于合并两个或多个具有相似结构的SELECT语句
+    
+        hive> SELECT * FROM t1 UNION ALL SELECT * FROM t2;
+        --UNION操作符选取不同的值，如果允许重复的值，请使用 UNION ALL
 
 /*参考：
 【1】原生函数：https://cwiki.apache.org/confluence/display/Hive/LanguageManual+UDF
